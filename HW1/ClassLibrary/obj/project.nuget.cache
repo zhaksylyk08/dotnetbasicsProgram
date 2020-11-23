@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "5hs8OB5ON9s4/WI0DWkb+4uS3JgR3aWzEchMqLc62UpZmNKI6x+2bZ88M0OT8+6JZDXsGr5+d8VQU+doObwdUg==",
+  "success": true,
+  "projectFilePath": "C:\\dotnetmentoring\\HW1\\ClassLibrary\\ClassLibrary.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Zhadyra_Zhaksylyk\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Zhadyra_Zhaksylyk\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
