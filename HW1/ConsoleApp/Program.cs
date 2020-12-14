@@ -7,8 +7,15 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            var name = Console.ReadLine();
-            Console.WriteLine(Class1.SayHello(name));
+            try
+            {
+                var name = args[0];
+                Console.WriteLine(Class1.SayHello(name));
+            }
+            catch(IndexOutOfRangeException)
+            {
+                Console.WriteLine("args is null");
+            }
         }
     }
 }
