@@ -7,6 +7,7 @@ namespace ConsoleApp
 {
     public delegate void FileFoundEventHandler(object sender, FileFoundEventArgs e);
     public delegate void DirectoryFoundEventHandler(object sender, DirectoryFoundEventArgs e);
+    public delegate void FilteredFileDirectoryFoundEventHandler(object sender, FilteredFileDirectoryFoundEventArgs e);
     class FileSystemVisitor : IEnumerable
     {
         private string rootPath;
@@ -16,6 +17,7 @@ namespace ConsoleApp
         public static event Action Finished;
         public event FileFoundEventHandler FileFound;
         public event DirectoryFoundEventHandler DirectoryFound;
+        public event FilteredFileDirectoryFoundEventHandler FilteredFileDirectoryFound;
         public FileSystemVisitor(string rootPath)
         {
             this.rootPath = rootPath;
@@ -28,6 +30,7 @@ namespace ConsoleApp
         {
             this.rootPath = rootPath;
             dirsAndFiles = filterDirsAndFiles(dirsAndFiles);
+            OnFilteredFileDirectoryFound(new FilteredFileDirectoryFoundEventArgs(dirsAndFiles));
         }
 
         public IEnumerator GetEnumerator()
@@ -50,6 +53,15 @@ namespace ConsoleApp
         protected virtual void OnDirectoryFound(DirectoryFoundEventArgs e)
         {
             DirectoryFoundEventHandler handler = DirectoryFound;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        protected virtual void OnFilteredFileDirectoryFound(FilteredFileDirectoryFoundEventArgs e)
+        {
+            FilteredFileDirectoryFoundEventHandler handler = FilteredFileDirectoryFound;
             if (handler != null)
             {
                 handler(this, e);
