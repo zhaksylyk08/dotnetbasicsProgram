@@ -13,10 +13,10 @@ namespace ConsoleApp
 
             var fileSystemVisitor = new FileSystemVisitor(root);
 
-            //foreach (var item in fileSystemVisitor)
-            //{
-            //    Console.WriteLine(item);
-            //}
+            foreach (var item in fileSystemVisitor)
+            {
+                Console.WriteLine(item);
+            }
         }
 
         static void StartedWriteToConsole()
