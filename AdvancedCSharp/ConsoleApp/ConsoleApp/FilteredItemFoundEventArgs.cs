@@ -5,11 +5,11 @@ namespace ConsoleApp
 {
     public class FilteredItemFoundEventArgs<T> : EventArgs where T : FileSystemInfo 
     {
-        public readonly T filteredItemFoundInfo;
+        public T FilteredItemFoundInfo;
 
         public FilteredItemFoundEventArgs(T filteredItemFoundInfo)
         {
-            this.filteredItemFoundInfo = filteredItemFoundInfo;
+            FilteredItemFoundInfo = filteredItemFoundInfo;
         }
     }
 }
