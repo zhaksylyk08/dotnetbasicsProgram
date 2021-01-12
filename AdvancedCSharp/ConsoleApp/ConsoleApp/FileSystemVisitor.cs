@@ -2,35 +2,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ConsoleApp
 {
-    public delegate void FileFoundEventHandler(object sender, FileFoundEventArgs e);
-    public delegate void DirectoryFoundEventHandler(object sender, DirectoryFoundEventArgs e);
-    public delegate void FilteredFileDirectoryFoundEventHandler(object sender, FilteredFileDirectoryFoundEventArgs e);
+    public delegate void FileFoundEventHandler(object sender, ItemFoundEventArgs<FileInfo> e);
+    public delegate void DirectoryFoundEventHandler(object sender, ItemFoundEventArgs<DirectoryInfo> e);
+    public delegate void FilteredFileFoundEventHandler(object sender, FilteredItemFoundEventArgs<FileInfo> e);
+    public delegate void FilteredDirectoryFoundEventHandler(object sender, FilteredItemFoundEventArgs<DirectoryInfo> e);
     class FileSystemVisitor : IEnumerable
     {
         private string rootPath;
-        private List<string> dirsAndFiles;
+        private List<FileSystemInfo> dirsAndFiles;
 
         public static event Action Started;
         public static event Action Finished;
         public event FileFoundEventHandler FileFound;
-        public event DirectoryFoundEventHandler DirectoryFound;
-        public event FilteredFileDirectoryFoundEventHandler FilteredFileDirectoryFound;
+        public static event DirectoryFoundEventHandler DirectoryFound;
+        public event FilteredFileFoundEventHandler FilteredFileFound;
+        public event FilteredDirectoryFoundEventHandler FilteredDirectoryFound;
         public FileSystemVisitor(string rootPath)
         {
             this.rootPath = rootPath;
             TraverseFileSystem();
         }
 
-        public FileSystemVisitor(string rootPath, 
-                                    Func<List<string>, List<string>> filterDirsAndFiles)
-                                    :this(rootPath)
+        public FileSystemVisitor(string rootPath, Func<FileSystemInfo, bool> predicate)
+            :this(rootPath)
         {
-            this.rootPath = rootPath;
-            dirsAndFiles = filterDirsAndFiles(dirsAndFiles);
-            OnFilteredFileDirectoryFound(new FilteredFileDirectoryFoundEventArgs(dirsAndFiles));
+            dirsAndFiles = dirsAndFiles.Where(item => predicate(item)).ToList();
+
+            dirsAndFiles.ForEach(item => 
+            {
+                if ((item.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    OnFilteredDirectoryFound(new FilteredItemFoundEventArgs<DirectoryInfo>(item as DirectoryInfo));
+                }
+                else
+                {
+                    OnFilteredFileFound(new FilteredItemFoundEventArgs<FileInfo>(item as FileInfo));
+                }
+            });
         }
 
         public IEnumerator GetEnumerator()
@@ -41,27 +53,40 @@ namespace ConsoleApp
             }
         }
 
-        protected virtual void OnFileFound(FileFoundEventArgs e)
+        protected virtual void OnFileFound(ItemFoundEventArgs<FileInfo> e)
         {
             FileFoundEventHandler handler = FileFound;
+
             if (handler != null)
             {
                 handler(this, e);
             }
         }
 
-        protected virtual void OnDirectoryFound(DirectoryFoundEventArgs e)
+        protected virtual void OnDirectoryFound(ItemFoundEventArgs<DirectoryInfo> e)
         {
             DirectoryFoundEventHandler handler = DirectoryFound;
+
             if (handler != null)
             {
                 handler(this, e);
             }
         }
 
-        protected virtual void OnFilteredFileDirectoryFound(FilteredFileDirectoryFoundEventArgs e)
+        protected virtual void OnFilteredDirectoryFound(FilteredItemFoundEventArgs<DirectoryInfo> e)
         {
-            FilteredFileDirectoryFoundEventHandler handler = FilteredFileDirectoryFound;
+            FilteredDirectoryFoundEventHandler handler = FilteredDirectoryFound;
+
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        protected virtual void OnFilteredFileFound(FilteredItemFoundEventArgs<FileInfo> e)
+        {
+            FilteredFileFoundEventHandler handler = FilteredFileFound;
+
             if (handler != null)
             {
                 handler(this, e);
@@ -72,7 +97,7 @@ namespace ConsoleApp
         {
             Started();
 
-            dirsAndFiles = new List<string>();
+            dirsAndFiles = new List<FileSystemInfo>();
             var dirs = new Stack<string>();
 
             dirs.Push(rootPath);
@@ -88,9 +113,17 @@ namespace ConsoleApp
 
                     foreach (var subDir in subDirs)
                     {
-                        var di = new DirectoryInfo(subDir);
-                        dirsAndFiles.Add(di.Name);
-                        OnDirectoryFound(new DirectoryFoundEventArgs(di.Name));
+                        var directoryInfo = new DirectoryInfo(subDir);
+                        dirsAndFiles.Add(directoryInfo);
+
+                        var args = new ItemFoundEventArgs<DirectoryInfo>(directoryInfo);
+                        OnDirectoryFound(args);
+
+                        if (args.CancelRequested)
+                        {
+                            break;
+                        }
+
                         dirs.Push(subDir);
                     }
                 }
@@ -100,7 +133,7 @@ namespace ConsoleApp
                     continue;
                 }
 
-                string[] files = null;
+                string[] files;
 
                 try
                 {
@@ -108,9 +141,16 @@ namespace ConsoleApp
 
                     foreach (var file in files)
                     {
-                        var fi = new FileInfo(file);
-                        OnFileFound(new FileFoundEventArgs(fi.Name));
-                        dirsAndFiles.Add(fi.Name);
+                        var fileInfo = new FileInfo(file);
+                        dirsAndFiles.Add(fileInfo);
+
+                        var args = new ItemFoundEventArgs<FileInfo>(fileInfo);
+                        OnFileFound(args);
+
+                        if (args.CancelRequested)
+                        {
+                            break;
+                        }
                     }
                 }
                 catch(Exception e)
