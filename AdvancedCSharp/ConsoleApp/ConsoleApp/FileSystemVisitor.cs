@@ -17,10 +17,10 @@ namespace ConsoleApp
 
         public static event Action Started;
         public static event Action Finished;
-        public event FileFoundEventHandler FileFound;
+        public static event FileFoundEventHandler FileFound;
         public static event DirectoryFoundEventHandler DirectoryFound;
-        public event FilteredFileFoundEventHandler FilteredFileFound;
-        public event FilteredDirectoryFoundEventHandler FilteredDirectoryFound;
+        public static event FilteredFileFoundEventHandler FilteredFileFound;
+        public static event FilteredDirectoryFoundEventHandler FilteredDirectoryFound;
         public FileSystemVisitor(string rootPath)
         {
             this.rootPath = rootPath;
@@ -121,7 +121,7 @@ namespace ConsoleApp
 
                         if (args.CancelRequested)
                         {
-                            break;
+                            return;
                         }
 
                         dirs.Push(subDir);
