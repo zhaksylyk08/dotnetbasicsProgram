@@ -10,7 +10,8 @@ namespace ConsoleApp
     public delegate void DirectoryFoundEventHandler(object sender, ItemFoundEventArgs<DirectoryInfo> e);
     public delegate void FilteredFileFoundEventHandler(object sender, FilteredItemFoundEventArgs<FileInfo> e);
     public delegate void FilteredDirectoryFoundEventHandler(object sender, FilteredItemFoundEventArgs<DirectoryInfo> e);
-    class FileSystemVisitor : IEnumerable
+
+    public class FileSystemVisitor : IEnumerable
     {
         private string rootPath;
         private List<FileSystemInfo> dirsAndFiles;
@@ -50,6 +51,22 @@ namespace ConsoleApp
             foreach (var item in dirsAndFiles)
             {
                 yield return item;
+            }
+        }
+
+        public virtual void OnStarted()
+        {
+            if (Started != null)
+            {
+                Started();
+            }
+        }
+
+        public virtual void OnFinished()
+        {
+            if (Finished != null) 
+            {
+                Finished();
             }
         }
 
@@ -95,7 +112,7 @@ namespace ConsoleApp
 
         private void TraverseFileSystem()
         {
-            Started();
+            OnStarted();
 
             dirsAndFiles = new List<FileSystemInfo>();
             var dirs = new Stack<string>();
@@ -160,7 +177,7 @@ namespace ConsoleApp
                 }
             }
 
-            Finished();
+            OnFinished();
         }
     }
 }
