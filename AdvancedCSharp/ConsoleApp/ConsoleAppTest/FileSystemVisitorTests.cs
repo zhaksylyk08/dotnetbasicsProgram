@@ -90,5 +90,35 @@ namespace ConsoleAppTest
         {
             Assert.DoesNotThrow(() => _fileSystemVisitor.TraverseFileSystem());
         }
+
+        [Test]
+        public void DirectoryFoundEvent_TerminatesFileSystemSearching()
+        {
+            void HandleDirectoryFound(object sender, ItemFoundEventArgs<DirectoryInfo> e)
+            {
+                if (e.FoundItemInfo.Name == "dir1")
+                {
+                    e.CancelRequested = true;
+                }
+            }
+
+            FileSystemVisitor.DirectoryFound += HandleDirectoryFound;
+
+
+            var testFileSystemVisitor = new FileSystemVisitor(_testPath);
+
+            int expectedNumberOfDirs = 1;
+
+            int actualNumberOfItems = 0;
+
+            foreach (var fsi in testFileSystemVisitor)
+            {
+                actualNumberOfItems++;
+            }
+
+            Assert.AreEqual(expectedNumberOfDirs, actualNumberOfItems);
+
+            FileSystemVisitor.DirectoryFound -= HandleDirectoryFound;
+        }
     }
 }
