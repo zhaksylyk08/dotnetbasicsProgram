@@ -83,6 +83,12 @@ namespace ConsoleAppTest
             }
 
             Assert.AreEqual(expectedNumberOfItems, actualNumberOfItems);
-        } 
+        }
+
+        [Test]
+        public void StartedEventIsNull_ExceptionIsNotThrown()
+        {
+            Assert.DoesNotThrow(() => _fileSystemVisitor.TraverseFileSystem());
+        }
     }
 }

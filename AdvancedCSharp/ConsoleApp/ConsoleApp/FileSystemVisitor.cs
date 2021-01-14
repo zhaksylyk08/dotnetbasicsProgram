@@ -110,7 +110,7 @@ namespace ConsoleApp
             }
         }
 
-        private void TraverseFileSystem()
+        public void TraverseFileSystem()
         {
             OnStarted();
 
