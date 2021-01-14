@@ -59,5 +59,30 @@ namespace ConsoleAppTest
 
             Assert.AreEqual(expectedNumberOfItems, actualNumberOfItems);
         }
+
+        [Test]
+        public void FileSystemVisitor_Constructor_With_Predicate_Filters_Items()
+        {
+            var fileSystemVisitorWithPredicate = new FileSystemVisitor(_testPath, (FileSystemInfo fsi) =>
+            {
+                if (fsi.Name == "file2")
+                {
+                    return true;
+                }
+
+                return false;
+            });
+
+            int expectedNumberOfItems = 1;
+
+            int actualNumberOfItems = 0;
+
+            foreach (var item in fileSystemVisitorWithPredicate)
+            {
+                actualNumberOfItems++;
+            }
+
+            Assert.AreEqual(expectedNumberOfItems, actualNumberOfItems);
+        } 
     }
 }
