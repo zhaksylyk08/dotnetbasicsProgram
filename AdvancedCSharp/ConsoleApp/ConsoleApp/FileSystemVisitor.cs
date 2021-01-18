@@ -13,8 +13,8 @@ namespace ConsoleApp
 
     public class FileSystemVisitor : IEnumerable
     {
-        private string rootPath;
-        private List<FileSystemInfo> dirsAndFiles;
+        private string _rootPath;
+        private List<FileSystemInfo> _dirsAndFiles;
 
         public static event Action Started;
         public static event Action Finished;
@@ -24,100 +24,44 @@ namespace ConsoleApp
         public static event FilteredDirectoryFoundEventHandler FilteredDirectoryFound;
         public FileSystemVisitor(string rootPath)
         {
-            this.rootPath = rootPath;
+            _rootPath = rootPath;
             TraverseFileSystem();
         }
 
         public FileSystemVisitor(string rootPath, Func<FileSystemInfo, bool> predicate)
             :this(rootPath)
         {
-            dirsAndFiles = dirsAndFiles.Where(item => predicate(item)).ToList();
+            _dirsAndFiles = _dirsAndFiles.Where(item => predicate(item)).ToList();
 
-            dirsAndFiles.ForEach(item => 
+            _dirsAndFiles.ForEach(item => 
             {
                 if ((item.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
                 {
-                    OnFilteredDirectoryFound(new FilteredItemFoundEventArgs<DirectoryInfo>(item as DirectoryInfo));
+                    FilteredDirectoryFound?.Invoke(this, new FilteredItemFoundEventArgs<DirectoryInfo>(item as DirectoryInfo));
                 }
                 else
                 {
-                    OnFilteredFileFound(new FilteredItemFoundEventArgs<FileInfo>(item as FileInfo));
+                    FilteredFileFound?.Invoke(this, new FilteredItemFoundEventArgs<FileInfo>(item as FileInfo));
                 }
             });
         }
 
         public IEnumerator GetEnumerator()
         {
-            foreach (var item in dirsAndFiles)
+            foreach (var item in _dirsAndFiles)
             {
                 yield return item;
             }
         }
 
-        public virtual void OnStarted()
-        {
-            if (Started != null)
-            {
-                Started();
-            }
-        }
-
-        public virtual void OnFinished()
-        {
-            if (Finished != null) 
-            {
-                Finished();
-            }
-        }
-
-        protected virtual void OnFileFound(ItemFoundEventArgs<FileInfo> e)
-        {
-            FileFoundEventHandler handler = FileFound;
-
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        protected virtual void OnDirectoryFound(ItemFoundEventArgs<DirectoryInfo> e)
-        {
-            DirectoryFoundEventHandler handler = DirectoryFound;
-
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        protected virtual void OnFilteredDirectoryFound(FilteredItemFoundEventArgs<DirectoryInfo> e)
-        {
-            FilteredDirectoryFoundEventHandler handler = FilteredDirectoryFound;
-
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        protected virtual void OnFilteredFileFound(FilteredItemFoundEventArgs<FileInfo> e)
-        {
-            FilteredFileFoundEventHandler handler = FilteredFileFound;
-
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
         public void TraverseFileSystem()
         {
-            OnStarted();
+            Started?.Invoke();
 
-            dirsAndFiles = new List<FileSystemInfo>();
+            _dirsAndFiles = new List<FileSystemInfo>();
             var dirs = new Stack<string>();
 
-            dirs.Push(rootPath);
+            dirs.Push(_rootPath);
 
             while (dirs.Count > 0)
             {
@@ -131,10 +75,10 @@ namespace ConsoleApp
                     foreach (var subDir in subDirs)
                     {
                         var directoryInfo = new DirectoryInfo(subDir);
-                        dirsAndFiles.Add(directoryInfo);
+                        _dirsAndFiles.Add(directoryInfo);
 
                         var args = new ItemFoundEventArgs<DirectoryInfo>(directoryInfo);
-                        OnDirectoryFound(args);
+                        DirectoryFound?.Invoke(this, args);
 
                         if (args.CancelRequested)
                         {
@@ -159,10 +103,10 @@ namespace ConsoleApp
                     foreach (var file in files)
                     {
                         var fileInfo = new FileInfo(file);
-                        dirsAndFiles.Add(fileInfo);
+                        _dirsAndFiles.Add(fileInfo);
 
                         var args = new ItemFoundEventArgs<FileInfo>(fileInfo);
-                        OnFileFound(args);
+                        FileFound?.Invoke(this, args);
 
                         if (args.CancelRequested)
                         {
@@ -177,7 +121,7 @@ namespace ConsoleApp
                 }
             }
 
-            OnFinished();
+            Finished?.Invoke();
         }
     }
 }
