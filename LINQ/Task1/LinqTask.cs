@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Task1.DoNotChange;
 
 namespace Task1
@@ -8,7 +9,17 @@ namespace Task1
     {
         public static IEnumerable<Customer> Linq1(IEnumerable<Customer> customers, decimal limit)
         {
-            throw new NotImplementedException();
+            return customers.Where(c =>
+            {
+                decimal sumOfAllOrders = c.Orders.Sum(order => order.Total);
+
+                if (sumOfAllOrders > limit)
+                {
+                    return true;
+                }
+
+                return false;
+            });
         }
 
         public static IEnumerable<(Customer customer, IEnumerable<Supplier> suppliers)> Linq2(
