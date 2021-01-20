@@ -27,7 +27,14 @@ namespace Task1
             IEnumerable<Supplier> suppliers
         )
         {
-            throw new NotImplementedException();
+            var result = customers.Select(customer =>
+            {
+                return  (customer,
+                    suppliers.Where(supplier => supplier.Country == customer.Country
+                        && supplier.City == customer.City));
+            });
+
+            return result;
         }
 
         public static IEnumerable<(Customer customer, IEnumerable<Supplier> suppliers)> Linq2UsingGroup(
