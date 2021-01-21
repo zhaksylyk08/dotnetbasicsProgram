@@ -64,23 +64,26 @@ namespace Task1
             IEnumerable<Customer> customers
         )
         {
-            return customers.Select(customer =>
-            {
-                return (customer,
-                    customer.Orders.Select(order => order.OrderDate).Min());
-            });
+            return customers.Select(customer => (customer,
+                customer.Orders.Select(order => order.OrderDate).Min()));
         }
 
         public static IEnumerable<(Customer customer, DateTime dateOfEntry)> Linq5(
             IEnumerable<Customer> customers
         )
         {
-            throw new NotImplementedException();
+            return customers.Select(customer => (customer,
+                customer.Orders.Select(order => order.OrderDate).Min()))
+                .OrderBy(c => c.Item2.Year)
+                .ThenBy(c => c.Item2.Month)
+                .ThenByDescending(c => c.customer.Orders.Sum(order => order.Total))
+                .ThenBy(c => c.customer.CompanyName);
         }
 
         public static IEnumerable<Customer> Linq6(IEnumerable<Customer> customers)
         {
-            throw new NotImplementedException();
+            return customers.Where(customer => customer.PostalCode.Any(Char.IsLetter) ||
+                customer.Region == null || ! customer.Phone.StartsWith('('));
         }
 
         public static IEnumerable<Linq7CategoryGroup> Linq7(IEnumerable<Product> products)
