@@ -42,7 +42,17 @@ namespace Task1
             IEnumerable<Supplier> suppliers
         )
         {
-            throw new NotImplementedException();
+            var result =
+                customers.Select(customer =>
+                {
+                    return (customer,
+                        suppliers.GroupBy(supplier => new { Country = supplier.Country, City = supplier.City})
+                            .Where(supplierGroup => supplierGroup.Key.Country == customer.Country &&
+                                supplierGroup.Key.City == customer.City)
+                            .SelectMany(supplierGroup => supplierGroup));
+                });
+
+            return result;
         }
 
         public static IEnumerable<Customer> Linq3(IEnumerable<Customer> customers, decimal limit)
