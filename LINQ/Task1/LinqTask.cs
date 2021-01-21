@@ -57,7 +57,7 @@ namespace Task1
 
         public static IEnumerable<Customer> Linq3(IEnumerable<Customer> customers, decimal limit)
         {
-            throw new NotImplementedException();
+            return customers.Where(customer => customer.Orders.Any(order => order.Total > limit));
         }
 
         public static IEnumerable<(Customer customer, DateTime dateOfEntry)> Linq4(
