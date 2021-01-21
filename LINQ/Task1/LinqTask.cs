@@ -64,7 +64,11 @@ namespace Task1
             IEnumerable<Customer> customers
         )
         {
-            throw new NotImplementedException();
+            return customers.Select(customer =>
+            {
+                return (customer,
+                    customer.Orders.Select(order => order.OrderDate).Min());
+            });
         }
 
         public static IEnumerable<(Customer customer, DateTime dateOfEntry)> Linq5(
