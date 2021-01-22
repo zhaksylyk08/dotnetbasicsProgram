@@ -126,7 +126,16 @@ namespace Task1
             decimal expensive
         )
         {
-            throw new NotImplementedException();
+            var cheapProducts = products.Where(product => product.UnitPrice > 0 && product.UnitPrice <= cheap);
+            var middleProducts = products.Where(product => product.UnitPrice > cheap && product.UnitPrice <= middle);
+            var expensiveProducts = products.Where(product => product.UnitPrice > middle && product.UnitPrice <= expensive);
+
+            var result = new List<(decimal, IEnumerable<Product>)>();
+            result.Add((cheap, cheapProducts));
+            result.Add((middle, middleProducts));
+            result.Add((expensive, expensiveProducts));
+
+            return result.AsEnumerable();
         }
 
         public static IEnumerable<(string city, int averageIncome, int averageIntensity)> Linq9(
