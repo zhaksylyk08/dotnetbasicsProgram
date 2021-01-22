@@ -163,7 +163,19 @@ namespace Task1
 
         public static string Linq10(IEnumerable<Supplier> suppliers)
         {
-            throw new NotImplementedException();
+            string result = "";
+
+            var countries = suppliers.Select(supplier => supplier.Country)
+                .Distinct()
+                .OrderBy(country => country.Length)
+                .ThenBy(country => country);
+       
+            foreach (var country in countries)
+            {
+                result += country;
+            }
+
+            return result;
         }
     }
 }
