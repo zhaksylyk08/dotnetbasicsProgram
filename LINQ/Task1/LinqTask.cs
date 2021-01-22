@@ -88,18 +88,35 @@ namespace Task1
 
         public static IEnumerable<Linq7CategoryGroup> Linq7(IEnumerable<Product> products)
         {
-            /* example of Linq7result
+            var result = new List<Linq7CategoryGroup>();
 
-             category - Beverages
-	            UnitsInStock - 39
-		            price - 18.0000
-		            price - 19.0000
-	            UnitsInStock - 17
-		            price - 18.0000
-		            price - 19.0000
-             */
+            var categoryGroups = products.GroupBy(product => product.Category);
 
-            throw new NotImplementedException();
+            foreach (var categoryGroup in categoryGroups)
+            {
+                var linq7CategoryGroup = new Linq7CategoryGroup
+                {
+                    Category = categoryGroup.Key,
+                    UnitsInStockGroup = new List<Linq7UnitsInStockGroup>()
+                };
+
+                var unitsInStockGroups = categoryGroup.GroupBy(group => group.UnitsInStock);
+                
+                foreach (var unitsInStockGroup in unitsInStockGroups)
+                {
+                    var linq7UnitsInStockGroup = new Linq7UnitsInStockGroup
+                    {
+                        UnitsInStock = unitsInStockGroup.Key,
+                        Prices = unitsInStockGroup.Select(group => group.UnitPrice).OrderBy(unitPrice => unitPrice)
+                    };
+
+                    linq7CategoryGroup.UnitsInStockGroup.ToList().Add(linq7UnitsInStockGroup);
+                }
+
+                result.Add(linq7CategoryGroup);
+            }
+
+            return result.AsEnumerable<Linq7CategoryGroup>();
         }
 
         public static IEnumerable<(decimal category, IEnumerable<Product> products)> Linq8(
