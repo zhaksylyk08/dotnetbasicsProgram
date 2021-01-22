@@ -142,7 +142,23 @@ namespace Task1
             IEnumerable<Customer> customers
         )
         {
-            throw new NotImplementedException();
+            var result = new List<(string, int, int)>();
+            var cityGroups = customers.GroupBy(customer => customer.City);
+
+            foreach (var cityGroup in cityGroups)
+            {
+                var cityTotalIncome = cityGroup.Select(customer =>
+                    customer.Orders.Sum(order => order.Total)).Sum();
+                var cityTotalOrders = cityGroup.Select(customer =>
+                    customer.Orders.Count()).Sum();
+
+                int cityAverageIncome = (int)(Math.Round(cityTotalIncome / cityGroup.Count()));
+                int cityAverageIntensity = cityTotalOrders / cityGroup.Count();
+
+                result.Add((cityGroup.Key, cityAverageIncome, cityAverageIntensity));
+            }
+
+            return result.AsEnumerable<(string, int, int)>();
         }
 
         public static string Linq10(IEnumerable<Supplier> suppliers)
