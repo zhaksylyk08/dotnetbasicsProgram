@@ -164,6 +164,28 @@ namespace Task1
             Length--;
         }
 
+        public void RemoveFirst()
+        {
+            if (_headNode == null)
+            {
+                throw new InvalidOperationException("LinkedList is empty");
+            }
+
+            if (Length == 1)
+            {
+                _headNode = _lastNode = null;
+            }
+            else
+            {
+                var newHeadNode = _headNode.Next;
+                newHeadNode.Next = null;
+
+                _headNode = newHeadNode;
+            }
+
+            Length--;
+        }
+
         public T ElementAt(int position)
         {
             var node = GetNodeAt(position);

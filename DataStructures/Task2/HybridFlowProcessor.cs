@@ -16,12 +16,16 @@ namespace Task2
 
         public T Dequeue()
         {
-            throw new NotImplementedException();
+            T data = _linkedList.First.Data;
+
+            _linkedList.RemoveFirst();
+
+            return data;
         }
 
         public void Enqueue(T item)
         {
-            throw new NotImplementedException();
+            _linkedList.Add(item);
         }
 
         public T Pop()
