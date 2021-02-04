@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Task1
 {
-    public class LinkedList<T> : IEnumerable<T>
+    public class MyLinkedList<T> : IEnumerable<T>
     {
-        class Node
+        public class Node
         {
             public T Data { get; set; }
 
@@ -25,6 +25,10 @@ namespace Task1
         private Node _headNode;
 
         private Node _lastNode;
+
+        public Node First { get { return _headNode; } }
+
+        public Node Last { get { return _lastNode; } }
         public int Length { get; private set; }
 
         public void Add(T data)
@@ -133,6 +137,28 @@ namespace Task1
             {
                 previousNode.Next = nextNode;
                 nextNode.Previous = previousNode;
+            }
+
+            Length--;
+        }
+
+        public void RemoveLast()
+        {
+            if (_lastNode == null)
+            {
+                throw new InvalidOperationException("LinkedList is empty");
+            }
+
+            if (Length == 1)
+            {
+                _headNode = _lastNode = null;
+            }
+            else
+            {
+                var newLastNode = _lastNode.Previous;
+                newLastNode.Next = null;
+
+                _lastNode = newLastNode;
             }
 
             Length--;
