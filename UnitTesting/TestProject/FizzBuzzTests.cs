@@ -31,12 +31,37 @@ namespace TestProject
 
             for (int i = 3; i < 100; i += 3)
             {
-                var number = FizzBuzzReturnsAt(i);
+                var number = PrintReturnsAt(i);
                 Assert.AreEqual(expected, number);
             }
         }
 
-        private string FizzBuzzReturnsAt(int num)
+        [Test]
+        public void Print_Returns_Buzz()
+        {
+            var expected = "Buzz";
+
+            for (int i = 5; i <= 100; i += 5)
+            {
+                if (i % 3 != 0)
+                {
+                    var number = PrintReturnsAt(i);
+                    Assert.AreEqual(expected, number);
+                }
+            }
+        }
+
+        [TestCase(15)]
+        [TestCase(45)]
+        [TestCase(75)]
+        public void Print_Returns_FizzBuzz(int num)
+        {
+            var expected = "FizzBuzz";
+
+            Assert.AreEqual(expected, PrintReturnsAt(num));
+        }
+
+        private string PrintReturnsAt(int num)
         {
             int index = num - 1;
 
