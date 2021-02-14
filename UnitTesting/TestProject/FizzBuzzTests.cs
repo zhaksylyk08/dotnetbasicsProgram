@@ -31,8 +31,11 @@ namespace TestProject
 
             for (int i = 3; i < 100; i += 3)
             {
-                var number = PrintReturnsAt(i);
-                Assert.AreEqual(expected, number);
+                if (i % 5 != 0)
+                {
+                    var number = PrintReturnsAt(i);
+                    Assert.AreEqual(expected, number);
+                }
             }
         }
 
