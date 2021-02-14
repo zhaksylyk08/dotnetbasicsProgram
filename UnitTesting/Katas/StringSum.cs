@@ -6,28 +6,10 @@ namespace Katas
     {
         public string Sum(string num1, string num2)
         {
-            int n1, n2;
-            int sum = 0;
+            Int32.TryParse(num1, out int num1Value);
+            Int32.TryParse(num2, out int num2Value);
 
-            try
-            {
-                n1 = Int32.Parse(num1);
-                n2 = Int32.Parse(num2);
-
-                n1 = n1 < 0 ? 0 : n1;
-                n2 = n2 < 0 ? 0 : n2;
-
-                sum = n1 + n2;
-            }
-            catch (FormatException)
-            {
-
-            }
-            catch (OverflowException)
-            {
-                n1 = 0;
-                n2 = 0;
-            }
+            int sum = num1Value + num2Value;
 
             return sum.ToString();
         }
