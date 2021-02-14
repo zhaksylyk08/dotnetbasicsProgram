@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace TestProject
 {
-    public class Tests
+    public class StringSumTests
     {
         private StringSum _stringSum;
 
