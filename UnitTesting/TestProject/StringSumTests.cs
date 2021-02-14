@@ -20,7 +20,7 @@ namespace TestProject
         [TestCase("23", "0.5", ExpectedResult = "23")]
         [TestCase("-15", "7", ExpectedResult = "7")]
         [TestCase("8", "-1", ExpectedResult = "8")]
-        [TestCase("-55", "-12", ExpectedResult = 0)]
+        [TestCase("-55", "-12", ExpectedResult = "0")]
         public string Sum_Returns_StringsSum(string num1, string num2)
         {
             return _stringSum.Sum(num1, num2);
