@@ -17,6 +17,7 @@ namespace TestProject
         [TestCase(" ", "1", ExpectedResult = "1")]
         [TestCase("2", " ", ExpectedResult = "2")]
         [TestCase("3.5", "1", ExpectedResult = "1")]
+        [TestCase("23", "0.5", ExpectedResult = "23")]
         public string Sum_Returns_StringsSum(string num1, string num2)
         {
             return _stringSum.Sum(num1, num2);
