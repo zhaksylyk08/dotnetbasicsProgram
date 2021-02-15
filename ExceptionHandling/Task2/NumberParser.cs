@@ -64,17 +64,20 @@ namespace Task2
                 }
                 catch (OverflowException)
                 {
-                    double temp = (result + sum) * -1;
-                    double minValue = int.MinValue;
+                    if (stringValue[0] == '-')
+                    {
+                        sum *= -1;
+                        result *= -1;
+                        double temp = result + sum;
+                        double minValue = int.MinValue;
 
-                    if (temp == minValue)
-                    {
-                        return int.MinValue;
+                        if (temp == minValue)
+                        {
+                            return int.MinValue;
+                        }
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
             }
         }
